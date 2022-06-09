@@ -103,7 +103,7 @@ class CamApp(App):
         if (face_locations == []):
             return False
         else:
-            return True
+            return True     
 
     def close_application(self):
         App.get_running_app().stop()
