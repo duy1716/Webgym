@@ -16,13 +16,15 @@ import mysql.connector
 import cv2
 import os
 import face_recognition
+import playsound
+
 
 class CamApp(App):
 
     def build(self):
         # Main layout components
         self.web_cam = Image(size_hint=(1, .7))
-        self.button = Button(text="Take photo", on_press=self.take_photo, size_hint=(1, .15))
+        self.button = Button(text="Chụp ảnh", on_press=self.take_photo, size_hint=(1, .15))
         self.verification_label = Label(text="", size_hint=(1, .15))
 
         # Add items to layout
@@ -111,14 +113,15 @@ class CamApp(App):
         sampleNum = 0
         ret, frame = self.capture.read()
         frame = frame[120:120 + 250, 200:200 + 250, :]
-        self.verification_label.text = 'Can not detect your face' if self.check(frame) == False else ''
+        self.verification_label.text = 'Chưa thể lấy dữ liệu' if self.check(frame) == False else ''
         if self.check(frame) == False:
+            playsound.playsound("voice/4.mp3")
             sampleNum = 0
         else:
             id = self.generate_id()
             self.insertOrUpdate(id)
             cv2.imwrite('verification_image/User.' + str(id) + '.jpg', frame)
-
+            playsound.playsound("voice/5.mp3")
             sampleNum += 1
         if (sampleNum == 1):
             self.close_application()

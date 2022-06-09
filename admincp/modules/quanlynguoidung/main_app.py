@@ -17,14 +17,14 @@ import cv2
 import os
 import face_recognition
 import datetime
-import sys
+import playsound
 
 class CamApp(App):
 
     def build(self):
         # Main layout components
         self.web_cam = Image(size_hint=(1, .7))
-        self.button = Button(text="Verification", on_press=self.recognition, size_hint=(1, .15))
+        self.button = Button(text="Xác minh", on_press=self.recognition, size_hint=(1, .15))
         self.verification_label = Label(text="", size_hint=(1, .15))
 
         # Add items to layout
@@ -103,7 +103,8 @@ class CamApp(App):
         img = face_recognition.load_image_file("input_image/input_image.jpg")
         face_locations = face_recognition.face_locations(img)
         if (face_locations == []):
-            print("Make sure the camera captures the entire face")
+            print("Hãy để toàn bộ gương mặt vào máy ảnh")
+            playsound.playsound("voice/4.mp3")
             return None
         picture_of_me = face_recognition.load_image_file("input_image/input_image.jpg")
         my_face_encoding = face_recognition.face_encodings(picture_of_me)[0]
@@ -124,16 +125,19 @@ class CamApp(App):
         date = datetime.date(int(profile[6][0:4]), int(profile[6][5:7]), int(profile[6][8:10]))
         if (self.getDate() <= date):
             self.verification_label.text = profile[1] + " Còn thời hạn"
+            playsound.playsound("voice/1.mp3")
+
         else:
             self.verification_label.text = profile[1] + " Đã hết hạn"
-
+            playsound.playsound("voice/2.mp3")
 
     def recognition(self, *args):
         ret, frame = self.capture.read()
         frame = frame[120:120 + 250, 200:200 + 250, :]
         id = self.verification(frame)
         if (id == None):
-            self.verification_label.text = "Can not identify your face"
+            self.verification_label.text = "Không thể nhận diện gương mặt"
+            playsound.playsound("voice/3.mp3")
         else:
             # print(id)
             self.check_expiry(id)
