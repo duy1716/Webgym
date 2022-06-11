@@ -159,8 +159,8 @@ class CamApp(App):
 
     def count_day(self, id):
         profile = self.getProfile(id)
-        date = datetime.date(int(profile[6][0:4]), int(profile[6][5:7]), int(profile[6][8:10]))
-        count = int(profile[7])
+        date = datetime.date(int(profile[7][0:4]), int(profile[7][5:7]), int(profile[7][8:10]))
+        count = int(profile[8])
         if (self.getDate() != date):
             self.insertDate(id, self.getDate())
             self.insertcountDate(id, count + 1)
