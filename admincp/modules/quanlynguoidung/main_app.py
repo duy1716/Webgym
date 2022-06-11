@@ -67,9 +67,35 @@ class CamApp(App):
             isRecordExist = 1
 
         if (isRecordExist == 0):
-            query = "Insert into host_quanlynguoidung(Date_of_issue) values(" + str(date) + "')"
+            query = "Insert into host_quanlynguoidung(Nearest_day) values(" + str(date) + "')"
         else:
-            query = "Update host_quanlynguoidung Set Date_of_issue= '" + str(date) + "' Where ID= " + str(id)
+            query = "Update host_quanlynguoidung Set Nearest_day= '" + str(date) + "' Where ID= " + str(id)
+
+        cursor.execute(query)
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+    def insertcountDate(self, id, count):
+        conn = mysql.connector.connect(
+            host="localhost", user="root",
+            password="", database="web-gymphp")
+
+        cursor = conn.cursor()
+
+        query = "Select * from host_quanlynguoidung Where ID= " + str(id)
+
+        cursor.execute(query)
+
+        isRecordExist = 0
+
+        for row in cursor:
+            isRecordExist = 1
+
+        if (isRecordExist == 0):
+            query = "Insert into host_quanlynguoidung(Number_day) values(" + str(count) + "')"
+        else:
+            query = "Update host_quanlynguoidung Set Number_day= '" + str(count) + "' Where ID= " + str(id)
 
         cursor.execute(query)
         conn.commit()
@@ -131,6 +157,14 @@ class CamApp(App):
             self.verification_label.text = profile[1] + " Đã hết hạn"
             playsound.playsound("voice/2.mp3")
 
+    def count_day(self, id):
+        profile = self.getProfile(id)
+        date = datetime.date(int(profile[6][0:4]), int(profile[6][5:7]), int(profile[6][8:10]))
+        count = int(profile[7])
+        if (self.getDate() != date):
+            self.insertDate(id, self.getDate())
+            self.insertcountDate(id, count + 1)
+
     def recognition(self, *args):
         ret, frame = self.capture.read()
         frame = frame[120:120 + 250, 200:200 + 250, :]
@@ -141,6 +175,8 @@ class CamApp(App):
         else:
             # print(id)
             self.check_expiry(id)
+            self.count_day(id)
+
         
 if __name__ == '__main__':
     Config.set('graphics', 'width', '250')
