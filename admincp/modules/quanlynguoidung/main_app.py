@@ -158,12 +158,15 @@ class CamApp(App):
             playsound.playsound("voice/2.mp3")
 
     def count_day(self, id):
-        profile = self.getProfile(id)
-        date = datetime.date(int(profile[7][0:4]), int(profile[7][5:7]), int(profile[7][8:10]))
-        count = int(profile[8])
-        if (self.getDate() != date):
+            profile = self.getProfile(id)
+            count = int(profile[8])
+            if (profile[7] != ''):
+                date = datetime.date(int(profile[7][0:4]), int(profile[7][5:7]), int(profile[7][8:10]))
+            else:
+                date = self.getDate()
             self.insertDate(id, self.getDate())
-            self.insertcountDate(id, count + 1)
+            if (self.getDate() != date):
+                self.insertcountDate(id, count + 1)
 
     def recognition(self, *args):
         ret, frame = self.capture.read()
